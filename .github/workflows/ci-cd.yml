@@ -44,6 +44,7 @@ jobs:
         run: |
           wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
+          export PATH="$(pwd)/apache-jmeter-5.6.3/bin:$PATH"
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.6.3" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
