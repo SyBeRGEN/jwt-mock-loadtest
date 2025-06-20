@@ -62,13 +62,13 @@ jobs:
         run: jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
 
       - name: 📤 Upload result.jtl
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
           path: result.jtl
 
       - name: 📤 Upload HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jmeter-html-report
           path: report/
@@ -82,7 +82,7 @@ jobs:
           fi
 
       - name: 📞 Upload logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docker-compose-logs
           path: dc-logs.txt
@@ -109,3 +109,23 @@ jobs:
 
       - name: 🚀 Push Docker image
         run: docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+  publish-report:
+    needs: build-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Download HTML report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: report/
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./report
