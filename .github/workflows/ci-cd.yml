@@ -74,10 +74,14 @@ jobs:
           path: report/
 
       - name: 📤 Upload docker-compose logs (если есть)
-        if: exists('docker-compose.yml')
-        run: docker-compose logs > dc-logs.txt || true
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker-compose logs > dc-logs.txt
+          else
+            echo "docker-compose.yml не найден, логи не сохраняем"
+          fi
 
-      - name: 🧾 Upload logs
+      - name: 📞 Upload logs
         uses: actions/upload-artifact@v3
         with:
           name: docker-compose-logs
