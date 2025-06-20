@@ -37,29 +37,27 @@ jobs:
       - name: 🛠️ Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: 🧱 Build Spring Boot app
+      - name: 🩱 Build Spring Boot app
         run: ./gradlew build
 
-      - name: 🧲 Install Apache JMeter 5.6.3
+      - name: 🧩 Use local Apache JMeter 5.6.3
         run: |
-          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
-          tar -xzf apache-jmeter-5.6.3.tgz
-          echo "JMETER_HOME=$(pwd)/apache-jmeter-5.6.3" >> $GITHUB_ENV
-          echo "$(pwd)/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+          chmod +x tools/jmeter/bin/jmeter
 
-      - name: 🐳 Docker Compose Up (esli est')
+      - name: 📣 Docker Compose Up (если есть)
         run: |
           if [ -f docker-compose.yml ]; then
             docker-compose up -d
           else
-            echo "docker-compose.yml ne nayden, propuskaem"
+            echo "docker-compose.yml не найден, пропускаем"
           fi
 
       - name: 🕐 Wait for services (optional)
         run: sleep 10
 
       - name: 🚀 Run JMeter test
-        run: ./apache-jmeter-5.6.3/bin/jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
+        run: |
+          tools/jmeter/bin/jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
 
       - name: 📄 Upload result.jtl
         uses: actions/upload-artifact@v4
@@ -73,13 +71,12 @@ jobs:
           name: jmeter-html-report
           path: report/
 
-      - name: 📄 Upload docker-compose logs (esli est')
+      - name: 📄 Upload docker-compose logs (если есть)
         run: |
           if [ -f docker-compose.yml ]; then
             docker-compose logs > dc-logs.txt || echo "docker-compose logs failed" > dc-logs.txt
           else
-            echo "docker-compose.yml ne nayden, logi ne soxranyaem" > dc-logs.txt
-          fi
+            echo "docker-compose.yml не найден, логи не сохраняем" > dc-logs.txt
 
       - name: 📏 Upload logs
         if: always()
