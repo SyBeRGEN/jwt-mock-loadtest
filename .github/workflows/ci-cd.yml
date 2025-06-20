@@ -87,6 +87,7 @@ jobs:
             docker-compose logs > dc-logs.txt || echo "docker-compose logs failed" > dc-logs.txt
           else
             echo "docker-compose.yml ne nayden, logi ne soxranyaem" > dc-logs.txt
+          fi
 
       - name: 📏 Upload logs
         if: always()
