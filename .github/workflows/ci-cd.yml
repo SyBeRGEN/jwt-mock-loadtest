@@ -60,7 +60,9 @@ jobs:
         run: sleep 10
 
       - name: 🚀 Run JMeter test
-        run: jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
+        run: |
+          export PATH="$(pwd)/apache-jmeter-5.6.3/bin:$PATH"
+          jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
 
       - name: 📤 Upload result.jtl
         uses: actions/upload-artifact@v4
