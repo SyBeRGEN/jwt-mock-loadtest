@@ -47,9 +47,13 @@ jobs:
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.6.3" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
-      - name: 🐳 Docker Compose Up (optional)
-        if: exists('docker-compose.yml')
-        run: docker-compose up -d
+      - name: 🐳 Docker Compose Up (если есть)
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker-compose up -d
+          else
+            echo "docker-compose.yml не найден, пропускаем"
+          fi
 
       - name: 🕐 Wait for services (optional)
         run: sleep 10
