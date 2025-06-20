@@ -61,8 +61,7 @@ jobs:
 
       - name: 🚀 Run JMeter test
         run: |
-          export PATH="$(pwd)/apache-jmeter-5.6.3/bin:$PATH"
-          jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
+          ./apache-jmeter-5.6.3/bin/jmeter -n -t jwt_mock_test.jmx -l result.jtl -e -o report
 
       - name: 📤 Upload result.jtl
         uses: actions/upload-artifact@v4
@@ -79,12 +78,13 @@ jobs:
       - name: 📤 Upload docker-compose logs (если есть)
         run: |
           if [ -f docker-compose.yml ]; then
-            docker-compose logs > dc-logs.txt
+            docker-compose logs > dc-logs.txt || echo "docker-compose logs failed" > dc-logs.txt
           else
             echo "docker-compose.yml не найден, логи не сохраняем"
           fi
 
       - name: 📞 Upload logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: docker-compose-logs
